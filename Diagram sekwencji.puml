@@ -1,0 +1,90 @@
+@startuml
+title Diagram sekwencji - Symulacja ruchu drogowego
+
+actor Uzytkownik
+participant Aplikacja
+participant GeneratorMiasta
+participant GeneratorPojazdow
+participant Miasto
+participant SygnalizacjaSwietlna
+participant SilnikSymulacji
+
+== Generowanie miasta ==
+
+Uzytkownik -> Aplikacja: Uruchom aplikację
+Aplikacja --> Uzytkownik: Wyświetl menu główne
+
+Uzytkownik -> Aplikacja: Wybierz generowanie miasta
+Aplikacja -> GeneratorMiasta: generujMiasto()
+GeneratorMiasta -> Miasto: utworzMape()
+GeneratorMiasta -> Miasto: generujDrogi()
+GeneratorMiasta -> Miasto: generujSkrzyzowania()
+GeneratorMiasta -> Miasto: dodajSygnalizacje()
+Miasto --> GeneratorMiasta: Potwierdzenie utworzenia miasta
+GeneratorMiasta --> Aplikacja: Zwróć wygenerowane miasto
+
+== Generowanie pojazdów ==
+
+Aplikacja -> GeneratorPojazdow: generujPojazdy()
+GeneratorPojazdow -> Miasto: pobierzDrogi()
+Miasto --> GeneratorPojazdow: Lista dróg
+
+loop Do osiągnięcia limitu pojazdów
+    GeneratorPojazdow -> Miasto: dodajPojazd()
+end
+
+GeneratorPojazdow --> Aplikacja: Pojazdy wygenerowane
+Aplikacja --> Uzytkownik: Wyświetl miasto
+
+== Rozpoczęcie symulacji ==
+
+Uzytkownik -> Aplikacja: Rozpocznij symulację
+Aplikacja -> SilnikSymulacji: rozpocznij()
+SilnikSymulacji --> Aplikacja: Symulacja uruchomiona
+
+loop Podczas działania symulacji
+
+    SilnikSymulacji -> SygnalizacjaSwietlna: aktualizujStan()
+    SygnalizacjaSwietlna --> SilnikSymulacji: Aktualny stan świateł
+
+    SilnikSymulacji -> Miasto: pobierzPojazdy()
+    Miasto --> SilnikSymulacji: Lista pojazdów
+
+    loop Dla każdego pojazdu
+        SilnikSymulacji -> SilnikSymulacji: sprawdzMozliwoscRuchu()
+        alt Droga przejezdna
+            SilnikSymulacji -> Miasto: przesunPojazd()
+        else Droga zablokowana lub czerwone światło
+            SilnikSymulacji -> Miasto: zatrzymajPojazd()
+        end
+    end
+
+    SilnikSymulacji -> Aplikacja: aktualizujWidok()
+    Aplikacja --> Uzytkownik: Wyświetl aktualny stan miasta
+
+    opt Zmiana prędkości czasu
+        Uzytkownik -> Aplikacja: Zmień prędkość czasu
+        Aplikacja -> SilnikSymulacji: ustawPredkoscCzasu()
+        SilnikSymulacji --> Aplikacja: Potwierdzenie zmiany
+    end
+
+    opt Pauza symulacji
+        Uzytkownik -> Aplikacja: Zatrzymaj czas
+        Aplikacja -> SilnikSymulacji: zatrzymaj()
+        SilnikSymulacji --> Aplikacja: Symulacja wstrzymana
+
+        Uzytkownik -> Aplikacja: Wznów symulację
+        Aplikacja -> SilnikSymulacji: wznow()
+        SilnikSymulacji --> Aplikacja: Symulacja wznowiona
+    end
+
+end
+
+== Zakończenie ==
+
+Uzytkownik -> Aplikacja: Zakończ symulację
+Aplikacja -> SilnikSymulacji: zatrzymaj()
+SilnikSymulacji --> Aplikacja: Symulacja zakończona
+Aplikacja --> Uzytkownik: Wyświetl menu główne
+
+@enduml
