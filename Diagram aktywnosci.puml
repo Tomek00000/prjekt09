@@ -1,0 +1,63 @@
+
+@startuml
+title Diagram aktywności - Symulacja ruchu drogowego
+
+start
+
+:Uruchomienie aplikacji;
+:Wyświetlenie menu głównego;
+
+:Wybór opcji generowania miasta;
+:Ustawienie parametrów miasta;
+
+:Generowanie mapy miasta;
+:Generowanie dróg;
+:Generowanie skrzyżowań;
+:Umieszczenie sygnalizacji świetlnej;
+
+:Generowanie pojazdów;
+
+:Wyświetlenie wygenerowanego miasta;
+
+:Rozpoczęcie symulacji;
+
+while (Czy symulacja trwa?) is (Tak)
+
+  :Odczyt poleceń użytkownika;
+
+  if (Czy użytkownik zatrzymał czas?) then (Tak)
+    :Wstrzymanie symulacji;
+
+    while (Czy symulacja pozostaje w pauzie?) is (Tak)
+      :Oczekiwanie na polecenie użytkownika;
+    endwhile (Nie)
+
+    :Wznowienie symulacji;
+  endif
+
+  if (Czy użytkownik zmienił prędkość czasu?) then (Tak)
+    :Zmiana prędkości symulacji;
+  endif
+
+  :Aktualizacja sygnalizacji świetlnej;
+  :Sprawdzenie stanu świateł;
+
+  :Aktualizacja ruchu pojazdów;
+  :Sprawdzenie możliwości poruszania się;
+
+  if (Czy droga jest przejezdna?) then (Tak)
+    :Przesunięcie pojazdu;
+  else (Nie)
+    :Zatrzymanie pojazdu;
+  endif
+
+  :Odświeżenie widoku miasta;
+
+endwhile (Nie)
+
+:Zatrzymanie wszystkich pojazdów;
+:Zakończenie symulacji;
+
+stop
+@enduml
+
