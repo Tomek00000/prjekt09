@@ -1,0 +1,109 @@
+
+@startuml
+title Diagram ERD - Symulacja ruchu drogowego
+
+entity MIASTO {
+  * id_miasta : INT <<PK>>
+  --
+  nazwa : VARCHAR(100)
+  szerokosc : INT
+  wysokosc : INT
+  data_utworzenia : DATETIME
+}
+
+entity DROGA {
+  * id_drogi : INT <<PK>>
+  --
+  id_miasta : INT <<FK>>
+  dlugosc : FLOAT
+  liczba_pasow : INT
+  predkosc_maksymalna : FLOAT
+  typ_drogi : VARCHAR(50)
+}
+
+entity SKRZYZOWANIE {
+  * id_skrzyzowania : INT <<PK>>
+  --
+  id_miasta : INT <<FK>>
+  pozycja_x : FLOAT
+  pozycja_y : FLOAT
+  typ : VARCHAR(50)
+}
+
+entity SYGNALIZACJA_SWIETLNA {
+  * id_sygnalizacji : INT <<PK>>
+  --
+  id_skrzyzowania : INT <<FK>>
+  stan : VARCHAR(20)
+  czas_zielonego : INT
+  czas_czerwonego : INT
+  czas_zoltego : INT
+}
+
+entity POJAZD {
+  * id_pojazdu : INT <<PK>>
+  --
+  id_drogi : INT <<FK>>
+  typ_pojazdu : VARCHAR(50)
+  predkosc : FLOAT
+  maksymalna_predkosc : FLOAT
+  pozycja_x : FLOAT
+  pozycja_y : FLOAT
+  kierunek : VARCHAR(30)
+}
+
+entity SYMULACJA {
+  * id_symulacji : INT <<PK>>
+  --
+  id_miasta : INT <<FK>>
+  aktualny_czas : FLOAT
+  predkosc_czasu : FLOAT
+  status : VARCHAR(20)
+  data_rozpoczecia : DATETIME
+}
+
+entity GENERATOR_MIASTA {
+  * id_generatora : INT <<PK>>
+  --
+  id_miasta : INT <<FK>>
+  liczba_drog : INT
+  liczba_skrzyzowan : INT
+  rozmiar_miasta : INT
+}
+
+entity GENERATOR_POJAZDOW {
+  * id_generatora_pojazdow : INT <<PK>>
+  --
+  id_miasta : INT <<FK>>
+  maksymalna_liczba_pojazdow : INT
+  prawdopodobienstwo_generowania : FLOAT
+}
+
+entity PAS_DROGI {
+  * id_pasa : INT <<PK>>
+  --
+  id_drogi : INT <<FK>>
+  numer_pasa : INT
+  kierunek_ruchu : VARCHAR(30)
+}
+
+entity HISTORIA_SYMULACJI {
+  * id_zdarzenia : INT <<PK>>
+  --
+  id_symulacji : INT <<FK>>
+  typ_zdarzenia : VARCHAR(50)
+  opis : VARCHAR(255)
+  czas_wystapienia : FLOAT
+}
+
+MIASTO ||--o{ DROGA
+MIASTO ||--o{ SKRZYZOWANIE
+SKRZYZOWANIE ||--o{ SYGNALIZACJA_SWIETLNA
+DROGA ||--o{ POJAZD
+MIASTO ||--o{ SYMULACJA
+MIASTO ||--|| GENERATOR_MIASTA
+MIASTO ||--|| GENERATOR_POJAZDOW
+DROGA ||--o{ PAS_DROGI
+SYMULACJA ||--o{ HISTORIA_SYMULACJI
+
+@enduml
